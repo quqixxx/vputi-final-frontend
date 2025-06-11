@@ -18,7 +18,10 @@ function FlightSearchPage() {
         try {
             const flightPricesBackendUrl = `${API_BASE_URL}/api/test-flight-prices?origin=${originIata}&destination=${destinationIata}&departure_at=${departureDate}`;
             const flightsResponse = await fetch(flightPricesBackendUrl);
-            if (!flightsResponse.ok) { throw new Error('Ошибка получения цен'); }
+            if (!flightsResponse.ok) { 
+                const errorData = await flightsResponse.json().catch(() => ({}));
+                throw new Error(errorData.message || `Ошибка получения цен: ${flightsResponse.status}`);
+            }
             const flightsData = await flightsResponse.json();
             if (flightsData.success && flightsData.data) {
                 setFlights(flightsData.data);
@@ -29,13 +32,17 @@ function FlightSearchPage() {
     };
 
     const handleBooking = async (flightLink) => {
+        setError(null);
         try {
             const deeplinkResponse = await fetch(`${API_BASE_URL}/api/generate-flight-deeplink`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ aviasales_relative_link: flightLink })
             });
-            if (!deeplinkResponse.ok) { throw new Error('Ошибка генерации ссылки'); }
+            if (!deeplinkResponse.ok) { 
+                const errorData = await deeplinkResponse.json().catch(() => ({}));
+                throw new Error(errorData.message || `Ошибка генерации ссылки`);
+            }
             const deeplinkData = await deeplinkResponse.json();
             if (deeplinkData.success && deeplinkData.deeplink) { window.open(deeplinkData.deeplink, '_blank'); } 
             else { throw new Error('Не удалось получить корректный deeplink.'); }

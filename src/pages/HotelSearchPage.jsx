@@ -17,11 +17,19 @@ function HotelSearchPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(searchParams)
             });
-            if (!response.ok) { throw new Error('Ошибка генерации ссылки'); }
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Ошибка генерации ссылки на отель');
+            }
             const data = await response.json();
-            if (data.success && data.deeplink) { window.open(data.deeplink, '_blank'); } 
-            else { throw new Error('Не удалось получить корректный deeplink.'); }
-        } catch (err) { setError(err.message); } 
+            if (data.success && data.deeplink) {
+                window.open(data.deeplink, '_blank'); 
+            } else {
+                throw new Error('Не удалось получить корректный deeplink от сервера.');
+            }
+        } catch (err) {
+            setError(err.message);
+        } 
         finally { setIsLoading(false); }
     };
 

@@ -28,7 +28,7 @@ function FlightCard({ flight, currency, onBooking }) {
 }
 
 function SearchResults({ isLoading, error, flights, currentCurrency, onBooking }) {
-  if (isLoading) { return <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}><CircularProgress /></Box>; }
+  if (isLoading) { return <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}><CircularProgress />; }
   if (error) { return <Typography color="error" sx={{ mt: 2, textAlign: 'center' }}>{error}</Typography>; }
   if (flights.length === 0) { return null; }
   return (
